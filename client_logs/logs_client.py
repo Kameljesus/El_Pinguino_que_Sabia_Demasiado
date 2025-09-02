@@ -1,8 +1,8 @@
 # Importamos socket para conectarnos al servidor:
 import socket
 
-# Importamos random, para que elija uno de los valores al alzar:
-import random
+# Importamos sys para manejar directamente el sistema.
+import sys
 
 # Importamos datetime para que podamos registrar cuando se realizó el log:
 from datetime import datetime
@@ -14,35 +14,61 @@ import sqlite3
 from options_log import services, severities, messages
 
 
-# Nos conectamos nuestra base de datos:
-lista_de_logs = sqlite3.connect("Lista_de_movimientos.db") 
 
-# Creamos nuestro cursor:
-cursor = lista_de_logs.cursor()
+"""
+Socket, select y clientes:
+"""
 
+# Crear socket e intentar conectar
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    client_socket.connect(('localhost', 8000))
+except ConnectionRefusedError:
+    print("No se pudo conectar a ningún servidor. El servidor no debe estar abierto.")
+    sys.exit()
 
-# Función para generar un log aleatorio
-def generar_log_random():
-    log = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
-        "service": random.choice(services),
-        "severity": random.choice(severities),
-        "message": random.choice(messages)
-    }
-    return log
+print("Conectado al servidor!")
 
 
-# Generar 5 logs de ejemplo
-for _ in range(5):
-    print(generar_log_random())
+"""
+Base de Datos (DB):
+"""
+
+try: # Intentamos conectarnos a nuestra base de datos:
+    lista_de_logs = sqlite3.connect("Lista_de_movimientos.db") 
+
+# Si sale mal:
+except sqlite3.Error as e:
+    print(f"Error al conectar a la base de datos: {e}")
+    sys.exit(1)  # Salimos del programa si no hay DB
+
+# Si sale bien:
+else:
+    # Creamos nuestro cursor:
+    cursor = lista_de_logs.cursor()
+    print("Conectado a la base de datos con éxito.")
 
 
-# Función para enviar un log falso y que el servidor lo deniegue:
-def generar_false_log():
-    false_log = {
-        "timestamp": 0000 + "Z",
-        "service": "testing_service",
-        "severity": "testing_severity",
-        "message": "Soy un mensaje falso"
-    }
-    return false_log
+
+"""
+Bucle de manejo de mensajes:
+"""
+
+while True:
+    try:
+        msg = input("Escribe un mensaje: ")
+        client_socket.send(msg.encode("utf-8"))
+
+        respuesta = client_socket.recv(1024).decode("utf-8")
+        print(f"Servidor: {respuesta}")
+
+    
+    except ConnectionResetError:
+        client_socket.close()
+        # El servidor se desconectó:
+        break
+
+    except OSError:
+        print("El servidor fue cerrado repentinamente. Ya no se puede enviar más mensajes")
+        client_socket.close()
+        break
