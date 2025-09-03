@@ -1,7 +1,7 @@
 # Importamos sys para manejar directamente el sistema.
 import sys
 
-def establecer_conexion_socket(server_socket):
+def establecer_conexion_socket_server(server_socket):
     try:
         # Intentamos establecer la conexión: La IP, El Puerto para el socket.
         server_socket.bind(('localhost', 8000))
@@ -33,3 +33,27 @@ def establecer_conexion_socket(server_socket):
         server_socket.listen()
         print()
         print("Servidor iniciado correctamente en localhost:8000")
+
+
+def establecer_conexion_socket_client(client_socket):
+    try:
+        # Intentamos conectarnos al servidor en localhost:8000
+        client_socket.connect(('localhost', 8000))
+
+    except OSError as e:
+        print()
+        print(f"[ERROR] No se pudo conectar al servidor: {e}")
+        print("Error crítico al establecer conexión. Cerrando programa...")
+        sys.exit(1)
+
+    except Exception as e:
+        print()
+        print(f"[ERROR] Error inesperado al conectar al servidor: {e}")
+        print("Error crítico al establecer conexión. Cerrando programa...")
+        sys.exit(1)
+
+    else:
+        # No bloqueante, necesario si usas select en el cliente
+        client_socket.setblocking(False)
+        print()
+        print("Conexión al servidor establecida correctamente en localhost:8000")

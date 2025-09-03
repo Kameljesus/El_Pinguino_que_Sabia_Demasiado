@@ -54,10 +54,18 @@ def crear_conectar_db(): # O conectar
 
     # Si sale bien:
     else:
-        # Creamos nuestro cursor:
-        cursor = lista_de_logs.cursor()
         print()
         print("Conectado a la base de datos con éxito.")
+
+        # Retornamos la lista de logs:
+        return lista_de_logs 
+
+
+def crear_tabla(lista_de_logs):
+    # Creamos nuestro cursor:
+    cursor = lista_de_logs.cursor()
+    print()
+    print("Conectado a la base de datos con éxito.")
 
 
     try: # Intentamos crear la tabla de nuestra base de datos:
@@ -162,7 +170,8 @@ def crear_conectar_db(): # O conectar
             print()
             print("Base de datos cargada y actualizada con éxito")
 
-            return lista_de_logs, cursor
+            # Retomamos el cursor:
+            return cursor
 
 
 def cargar_log_a_db(cursor, lista_de_logs, autor, service, severity, mensaje):

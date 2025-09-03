@@ -5,9 +5,9 @@ import socket
 Archivos a ser importados:
 """
 
-from conexion_socket import establecer_conexion_socket
+from conexion_socket import establecer_conexion_socket_server
 
-from data_base_connection import crear_conectar_db, cargar_log_a_db
+from data_base_connection import crear_conectar_db, crear_tabla, cargar_log_a_db
 
 from select_management import vigilar_sockets, nuevo_cliente, recibir_mensaje_del_client
 
@@ -19,7 +19,7 @@ Config.: Socket, select y clientes:
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Conectamos nuestro socket:
-establecer_conexion_socket(server_socket)
+establecer_conexion_socket_server(server_socket)
 
 # Establecemos la lista de sockets a vigilar:
 sockets_list = [server_socket]
@@ -32,7 +32,8 @@ Base de Datos (DB):
 """
 
 # Conectamos y creamos la DB, obtenemos el objeto conexión
-lista_de_logs, cursor = crear_conectar_db()
+lista_de_logs = crear_conectar_db()
+cursor = crear_tabla(lista_de_logs)
 
 """
 Bucle de manejo de select:
