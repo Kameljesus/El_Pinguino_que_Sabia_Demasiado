@@ -7,9 +7,9 @@ Archivos a ser importados:
 
 from conexion_socket import establecer_conexion_socket_server
 
-from data_base_connection import crear_conectar_db, crear_tabla, cargar_log_a_db
+from data_base_connection import crear_conectar_db, crear_tabla, crear_log, cargar_log_a_db
 
-from select_management import vigilar_sockets, nuevo_cliente, recibir_mensaje_del_client
+from select_management import vigilar_sockets, nuevo_cliente, recibir_mensaje
 
 """
 Config.: Socket, select y clientes:
@@ -31,9 +31,13 @@ lista_de_clientes = {}
 Base de Datos (DB):
 """
 
-# Conectamos y creamos la DB, obtenemos el objeto conexión
+# Conectamos y creamos la DB, obtenemos el objeto cursor:
 lista_de_logs = crear_conectar_db()
 cursor = crear_tabla(lista_de_logs)
+# Creamos el log:
+mensaje_json = crear_log("server", "connect_db_service", "INFO", "Base de datos creada y/o inicializada")
+# Cargamos el log:
+cargar_log_a_db(cursor, lista_de_logs, mensaje_json)
 
 """
 Bucle de manejo de select:
@@ -59,7 +63,7 @@ while True:
             """
 
             # Recibimos el primer mensaje del cliente (su nombre):
-            nombre_del_cliente = recibir_mensaje_del_client(conexion, cursor, lista_de_logs)
+            nombre_del_cliente = recibir_mensaje(conexion, cursor, lista_de_logs)
 
             """
             Cargamos el log del nombre a la Base de Datos (DB):
@@ -77,13 +81,15 @@ while True:
             Resto de mensajes del cliente:
             """ 
 
-            mensaje = recibir_mensaje_del_client(conexion)
+            mensaje = recibir_mensaje(conexion)
+
             if mensaje is None:
                 print()
                 print(f"{nombre_del_cliente} no envió ningún mensaje o hubo error. Conexión cerrada.")
                 sockets_list.remove(client_socket)
                 if client_socket in lista_de_clientes:
                     del lista_de_clientes[client_socket]
+
             else:
                 print()
                 print(f"{nombre_del_cliente}: {mensaje}")
@@ -106,6 +112,7 @@ while True:
                     except Exception as e:
                         print()
                         print(f"Error enviando mensaje a {lista_de_clientes[other_client]}: {e}")
+                        cargar_log_a_db(cursor, lista_de_logs, "server", "send_global_message_service", "CRITICAL", f"Error inesperado en send: {e}")
                         # Opcional: cerrar la conexión si hay fallo grave
                         other_client.close()
                         sockets_list.remove(other_client)

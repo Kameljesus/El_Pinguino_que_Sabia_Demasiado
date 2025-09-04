@@ -1,4 +1,4 @@
-# Qué es un log?:
+## Qué es un log?:
 
 Un log es básicamente un registro estructurado de eventos que ocurren en un sistema.
 
@@ -11,7 +11,7 @@ Su propósito es documentar todo lo que sucede, para que luego alguien (humano o
 2. Depurar errores cuando algo falla.
 3. Analizar patrones y comportamiento del software.
 
-## Características de un log
+# Características de un log
 
 - Secuencial: cada entrada tiene un orden cronológico.
 
@@ -21,7 +21,7 @@ Su propósito es documentar todo lo que sucede, para que luego alguien (humano o
 
 - Automático: el sistema genera logs sin intervención manual.
 
-## Estructura:
+# Estructura:
 
 1️⃣ timestamp:
 
@@ -78,7 +78,7 @@ Resumiendo: cada log debería verse así en JSON:
 }
 
 
-## Analogía sencilla:
+# Analogía sencilla:
 
 Imaginá un diario de bitácora de un barco:
 
@@ -91,7 +91,7 @@ Cada servicio simulado genera logs.
 El servidor central los recibe y los guarda para que después puedas consultarlos o analizarlos.
 
 
-# ¿Qué es JSON?
+## ¿Qué es JSON?
 
 JSON (JavaScript Object Notation) es un formato ligero de intercambio de datos que permite que distintos programas y lenguajes se comuniquen de forma entendible.
 
@@ -124,12 +124,12 @@ En tu proyecto:
 - El servidor lo parsea (lee) y lo guarda en la base de datos.
 
 
-# 🌐 ¿Qué es HTTP?:
+## 🌐 ¿Qué es HTTP?:
 
 HTTP (HyperText Transfer Protocol) es el protocolo que usan casi todos los servicios web para comunicarse.
 En simple: es el lenguaje que hablan cliente y servidor en la web.
 
-## Qué es GET?:
+# Qué es GET?:
 
 GET significa: “obtener”. Se usa para pedir información al servidor, sin modificar nada.
 
@@ -142,7 +142,7 @@ Respuesta: el servidor te devuelve lo que pediste.
 
 Analogía: ir a la biblioteca y pedir un libro prestado. No cambias nada, solo lees.
 
-## Qué es POST?:
+# Qué es POST?:
 
 POST significa “enviar” o “crear”. Se usa para mandar datos al servidor para que haga algo con ellos (guardar, procesar, etc).
 
@@ -156,7 +156,8 @@ Respuesta: el servidor confirma que lo recibió y lo procesó.
 Analogía: enviar una carta al servidor diciendo “acá está un nuevo log, guardalo”.
 
 
-# Qué es un Token?:
+
+## Qué es un Token?:
 
 Un token en programación (y en este proyecto) es básicamente una llave secreta en forma de texto.
 
@@ -190,8 +191,35 @@ En resumen:
 
 - Y también para autorizar (permitir o negar acceso).
 
+## Qué es un header?:
 
-# Qué es un Endpoint?:
+Un header (cabecera HTTP) es información adicional que se envía antes del cuerpo (body) de una petición o respuesta HTTP.
+Sirve para darle contexto al servidor o al cliente sobre lo que viene.
+
+Ejemplo de petición HTTP con headers
+
+Cuando tu cliente hace un POST /logs, no manda solo el JSON. También manda metadatos en el header.
+
+Por ejemplo:
+
+  POST /logs HTTP/1.1
+  Host: localhost:8000
+  Content-Type: application/json
+  Authorization: Token TOKEN123
+  Content-Length: 78
+
+  {"autor":"cliente1","service":"test","severity":"INFO","message":"Hola mundo!"}
+
+
+🔍 Fijate que:
+
+- Host: localhost:8000 → a qué servidor estás hablando.
+- Content-Type: application/json → el servidor sabe que el body está en formato JSON.
+- Authorization: Token TOKEN123 → tu header personalizado para autenticar al cliente.
+- Content-Length: 78 → cuántos bytes tiene el body.
+
+
+## Qué es un Endpoint?:
 
 Un endpoint es como una puerta de entrada a tu servidor, identificada por una dirección (URL) y un método (GET, POST, etc).
 
@@ -199,7 +227,7 @@ Es un punto final de comunicación entre un cliente y un servidor.
 
 Cada endpoint corresponde a una acción o recurso específico.
 
-## Ejemplo práctico
+# Ejemplo práctico:
 
 Imaginá tu servidor de logging escucha en:
 
@@ -233,7 +261,7 @@ Por ejemplo:
 En otras palabras: es el destino de tu mensaje o request dentro del servidor.
 
 
-# Analogías:
+## Analogías:
 
 | Concepto | Analogía                                                  |
 | -------- | --------------------------------------------------------- |
@@ -244,19 +272,19 @@ En otras palabras: es el destino de tu mensaje o request dentro del servidor.
 | Token    | Llave secreta que demuestra quién sos                     |
 
 
-## El Cartero y la carta:
+# El Cartero y la carta:
 
 Socket (TCP) 👉 es como el cartero + el sobre físico. Es el canal crudo que transporta bytes de un lado a otro.
 
 HTTP 👉 es el idioma y formato de la carta que viaja dentro de ese sobre. Define cómo escribirla para que el que la reciba entienda (dónde está el remitente, asunto, cuerpo del mensaje, etc.).
 
-## Las Llaves de la casa:
+# Las Llaves de la casa:
 
 Si tu casa tiene llaves distintas para cada persona, vos (el servidor) sabés quién puede entrar y quién no.
 
 El token sería esa llave.
 
-## El Restaurante:
+# El Restaurante:
 
 El restaurante entero es tu servidor.
 

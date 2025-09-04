@@ -80,7 +80,7 @@ def nuevo_cliente(server_socket, sockets_list, cursor, lista_de_logs):
     return None, None
 
 
-def recibir_mensaje_del_client(conexion, cursor, lista_de_logs):
+def recibir_mensaje(conexion, cursor, lista_de_logs):
     try: # Intentamos recibir su nombre (mensaje):
         mensaje = conexion.recv(1024).decode("utf-8")
     
@@ -123,10 +123,10 @@ def recibir_mensaje_del_client(conexion, cursor, lista_de_logs):
     return None
 
 
-def mandar_mensaje_al_server(client_socket, mensaje, cursor, lista_de_logs, nombre_del_cliente):
+def mandar_mensaje(socket, mensaje, cursor, lista_de_logs, nombre_del_cliente):
     try:
         # Intentamos enviar el mensaje al server
-        client_socket.send(mensaje.encode("utf-8"))
+        socket.send(mensaje.encode("utf-8"))
     
     # Si sale mal:
     # Error de conexión: ocurre si el server cierra la conexión antes de recibir el mensaje
@@ -134,7 +134,7 @@ def mandar_mensaje_al_server(client_socket, mensaje, cursor, lista_de_logs, nomb
         print()
         print(f"Error de conexión: el servidor cerró la conexión antes de recibir el mensaje: {e}")
         cargar_log_a_db(cursor, lista_de_logs, nombre_del_cliente, "send_message_service", "ERROR", f"Conexión cerrada antes de enviar mensaje: {e}")
-        client_socket.close()
+        socket.close()
         sys.exit(1)  # indica que hubo un fallo crítico
     
     # Error operativo: problemas en la red o en el socket al intentar enviar
@@ -142,7 +142,7 @@ def mandar_mensaje_al_server(client_socket, mensaje, cursor, lista_de_logs, nomb
         print()
         print(f"Error operativo al enviar el mensaje al servidor: {e}")
         cargar_log_a_db(cursor, lista_de_logs, nombre_del_cliente, "send_message_service", "ERROR", f"Error operativo al enviar mensaje: {e}")
-        client_socket.close()
+        socket.close()
         sys.exit(1)  # indica que hubo un fallo crítico
     
     # Otro error inesperado
@@ -150,7 +150,7 @@ def mandar_mensaje_al_server(client_socket, mensaje, cursor, lista_de_logs, nomb
         print()
         print(f"Error inesperado al enviar mensaje al servidor: {e}")
         cargar_log_a_db(cursor, lista_de_logs, nombre_del_cliente, "send_message_service", "CRITICAL", f"Error inesperado al enviar mensaje: {e}")
-        client_socket.close()
+        socket.close()
         sys.exit(1)  # indica que hubo un fallo crítico
 
     # Si todo sale bien, retornamos True para indicar éxito
