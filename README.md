@@ -36,14 +36,15 @@ Este proyecto demuestra comprensión de:
 
 Archivos principales:
 
+`.gitignore` — Archivo que lleva un proyecto de sockets en el que me quise basar para aprender y establecer una arquitectura.
+
+/proyecto_http
 - `http_server.py` — Servidor HTTP que recibe logs  
 - `http_client.py` — Cliente que envía logs al servidor  
 - `http_db_connect.py` — Funciones para crear la DB, insertar logs y consultar  
 - `conexion_http.py` — Funciones auxiliares para iniciar el servidor HTTP  
 - `http_management.py` — Handler personalizado para manejar requests POST y GET  
-- `tokens.py` — Diccionario de tokens válidos para autenticación  
-- `venv/` — Entorno virtual  
-- `.gitignore`
+- `tokens.py` — Diccionario de tokens válidos para autenticación
 
 ---
 
